@@ -1,4 +1,4 @@
-const VERSION = "v2.0";
+const VERSION = "v3.0";
 
 // offline Resource List
 const APP_STATIC_RESOURCES = [
@@ -86,23 +86,31 @@ self.addEventListener("fetch", (event) => {
 });
 
 
-function sendMessageToPWA(message)
-{
-    self.clients.matchAll().then((clients) => {
-        clients.array.forEach(client => {
-            client.postMessage(message);
-        });
-    }); 
-}
+// function sendMessageToPWA(message)
+// {
+//     self.clients.matchAll().then((clients) => {
+//         clients.array.forEach(client => {
+//             client.postMessage(message);
+//         });
+//     }); 
+// }
 
-setInterval(() => {
-    sendMessageToPWA({type: "update", data: "New Data Available"});
-}, 10000);
+// setInterval(() => {
+//     sendMessageToPWA({type: "update", data: "New Data Available"});
+// }, 10000);
 
 
-self.addEventListener("message", (event) => {
-    console.log('Service Worker received a message', event.data);
+// self.addEventListener("message", (event) => {
+//     console.log('Service Worker received a message', event.data);
 
-    // you can respond back if needed
-    event.source.postMessage({type: "response", data: "Message Received by Service Worker!"});
-});
+//     // you can respond back if needed
+//     event.source.postMessage({type: "response", data: "Message Received by Service Worker!"});
+// });
+
+const channel = new BroadcastChannel("pwa_channel");
+
+channel.onmessage = (event) => {
+    console.log('Received a message in SW:', event.data);
+    //echo the message back to the PWA
+    channel.postMessage('Service worker received: ' + event.data);
+};

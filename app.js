@@ -123,27 +123,40 @@ if ("serviceWorker" in navigator)
 }
 
 
-// listen for messages from the Service Worker
-navigator.serviceWorker.addEventListener('message', (event) => {
-    console.log('Received Message from Service Worker:', event.data);
+// // listen for messages from the Service Worker
+// navigator.serviceWorker.addEventListener('message', (event) => {
+//     console.log('Received Message from Service Worker:', event.data);
 
-    // handle different message types here
-    if (event.data.type === "update")
-    {
-        console.log('Update Received:', event.data.data);
-        //update your UI or perform some action
-    }
-});
+//     // handle different message types here
+//     if (event.data.type === "update")
+//     {
+//         console.log('Update Received:', event.data.data);
+//         //update your UI or perform some action
+//     }
+// });
 
-function sendMessageToSW(message)
-{
-    if (navigator.serviceWorker.controller)
-    {
-        navigator.serviceWorker.controller.postMessage(message);
-    }
-}
+// function sendMessageToSW(message)
+// {
+//     if (navigator.serviceWorker.controller)
+//     {
+//         navigator.serviceWorker.controller.postMessage(message);
+//     }
+// }
 
 
 document.getElementById('sendButton').addEventListener('click', () => {
-    sendMessageToSW({type: "action", data: "Button Clicked"});
+    // sendMessageToSW({type: "action", data: "Button Clicked"});
+    const message = "Hello from PWA";
+    channel.postMessage(message);
+    console.log("Sent message from PWA: ", message);
 });
+
+//create Broadcast Channel
+// Name needs to match in SW
+const channel = new BroadcastChannel("pwa_channel");
+
+
+channel.onmessage = (event) => {
+    console.log('Received a message in PWA:', event.data);
+    document.getElementById('messages').insertAdjacentHTML("beforeend", `<p>Received: ${event.data}</p>`);
+};
